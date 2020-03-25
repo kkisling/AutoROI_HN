@@ -1,0 +1,5 @@
+K:\Research\plugins\CreateOptStructures.esapi.dll
+K:\Research\plugins\CreateOptStructures.esapi.pdb
+K:\Research\Scripts Under Development\CreateOptStructures_vKK1\obj\x64\Debug\CreateOptStructures.csprojResolveAssemblyReference.cache
+K:\Research\Scripts Under Development\CreateOptStructures_vKK1\obj\x64\Debug\CreateOptStructures.esapi.dll
+K:\Research\Scripts Under Development\CreateOptStructures_vKK1\obj\x64\Debug\CreateOptStructures.esapi.pdb
