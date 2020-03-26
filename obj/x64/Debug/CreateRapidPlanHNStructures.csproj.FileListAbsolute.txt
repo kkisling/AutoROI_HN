@@ -10,3 +10,9 @@ O:\Kisling\Scripts Under Development\CreateOptStructures_HN_RP\obj\x64\Debug\Cre
 \\ucsdhc-varis2\radonc$\Kisling\Scripts Under Development\plugins\094CreateRapidPlanHNStructures.esapi.pdb
 \\ucsdhc-varis2\radonc$\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP\obj\x64\Debug\094CreateRapidPlanHNStructures.esapi.dll
 \\ucsdhc-varis2\radonc$\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP\obj\x64\Debug\094CreateRapidPlanHNStructures.esapi.pdb
+O:\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP_v2\obj\x64\Debug\CreateRapidPlanHNStructures.csprojAssemblyReference.cache
+O:\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP_v2\obj\x64\Debug\CreateRapidPlanHNStructures.csproj.CoreCompileInputs.cache
+O:\Kisling\Scripts Under Development\plugins\093CreateRapidPlanHNStructures.esapi.dll
+O:\Kisling\Scripts Under Development\plugins\093CreateRapidPlanHNStructures.esapi.pdb
+O:\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP_v2\obj\x64\Debug\093CreateRapidPlanHNStructures.esapi.dll
+O:\Kisling\Scripts Under Development\Source Codes\CreateOptStructures_HN_RP_v2\obj\x64\Debug\093CreateRapidPlanHNStructures.esapi.pdb
