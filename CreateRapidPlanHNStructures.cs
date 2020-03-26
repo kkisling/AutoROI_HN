@@ -35,6 +35,9 @@ namespace VMS.TPS
         const string PAROTID_L_ID = "Parotid L";
         const string PAROTID_R_ID = "Parotid R";
         const string PHARYNX_ID = "Pharynx";
+        const string BRAINSTEM_ID = "Brainstem";
+        const string CORD_ID = "Spinal Cord";
+
         // Structure ID that will be written to plan
         const string PTVHIGH_ID = "PTV_HIGH";
         const string PTVINTDVH_ID = "PTV_INT_DVH";
@@ -44,14 +47,22 @@ namespace VMS.TPS
         const string PAROTID_L_OPT_ID = "Parotid L OAR";
         const string PAROTID_R_OPT_ID = "Parotid R OAR";
         const string PHARYNX_OPT_ID = "OAR_Pharynx";
+        const string RING3_10_ID = "3_10mm RING";
+        const string BRAINSTEM3mm_ID = "Brainstem 3PRV";
+        const string CORD5mm_ID = "Spinal Cord 5PRV";
+
         // Structure ID for temporary structures, will not be written to plan
         const string BODY3mm_ID = "Body_3mm";
         const string PTVINT_ID = "PTV_INT";
         const string PTVLOW_ID = "PTV_LOW";
         const string PTVHIGHINT_ID = "PTV_HIGH+INT";
-        const string PTVALL_ID = "PTV_all";
+        const string PTVALL_ID = "PTV_ALL";
         const string PTVHIGH3mm_ID = "PTV_HIGH+3mm";
         const string PTVHIGHINT3mm_ID = "PTV_HIGH+INT+3mm";
+        const string PTVALL3mm_ID = "PTV_ALL+3mm";
+        const string PTVALL10mm_ID = "PTV_ALL+10mm";
+        const string RING3_10PRE_ID = "3_10mm RING_pre";
+
 
         public Script()
         {
@@ -110,6 +121,8 @@ namespace VMS.TPS
             bool flagOAR_parotidL = true;
             bool flagOAR_parotidR = true;
             bool flagOAR_pharynx = true;
+            bool flagOAR_brainstem = true;
+            bool flagOAR_cord = true;
 
             // find Parotid L
             Structure parotid_L = ss.Structures.FirstOrDefault(x => x.Id == PAROTID_L_ID);
@@ -136,12 +149,30 @@ namespace VMS.TPS
                 flagOAR_pharynx = false;
                 MessageBox.Show(string.Format("'{0}' not found! OK to continue? '{1}' will not be created.", PHARYNX_ID,
                     PHARYNX_OPT_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
-                return;
+            }
+
+            // find Brainstem
+            Structure brainstem = ss.Structures.FirstOrDefault(x => x.Id == BRAINSTEM_ID);
+            if (brainstem == null)
+            {
+                flagOAR_brainstem = false;
+                MessageBox.Show(string.Format("'{0}' not found! OK to continue? '{1}' will not be created.", BRAINSTEM_ID,
+                    BRAINSTEM3mm_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+            }
+
+            // find Spinal Cord
+            Structure cord = ss.Structures.FirstOrDefault(x => x.Id == CORD_ID);
+            if (cord == null)
+            {
+                flagOAR_cord = false;
+                MessageBox.Show(string.Format("'{0}' not found! OK to continue? '{1}' will not be created.", CORD_ID,
+                    CORD5mm_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
             }
 
             //============================
-            // CHECK if PTV_HIGH already exist. If it does exist, show warning and exit code
+            // CHECK if PTV_HIGH already exists. If it does exist, show warning and exit code
             //============================
+            // Do this because other structures that this code makes rely on it
 
             Structure check_PTVHigh = ss.Structures.FirstOrDefault(x => x.Id == PTVHIGH_ID);
             if (check_PTVHigh != null)
@@ -159,6 +190,7 @@ namespace VMS.TPS
             bool flagPTV_INTOPT = true;
             bool flagPTV_LOWDVH = true;
             bool flagPTV_LOWOPT = true;
+            bool flagPTV_RING = true;
 
             // Check for PTV_INT_DVH
             Structure check_PTVIntDVH = ss.Structures.FirstOrDefault(x => x.Id == PTVINTDVH_ID);
@@ -196,6 +228,15 @@ namespace VMS.TPS
                     PTVLOWOPT_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
             }
 
+            // Check for 3_10mm RING
+            Structure check_PTV_RING = ss.Structures.FirstOrDefault(x => x.Id == RING3_10_ID);
+            if (check_PTV_RING != null)
+            {
+                flagPTV_RING = false;
+                MessageBox.Show(string.Format("'{0}' already exists! '{0}' will not be created. OK to continue? ", RING3_10_ID,
+                    RING3_10_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+            }
+
             // Check for Parotid L OAR
             Structure check_ParotidLOAR = ss.Structures.FirstOrDefault(x => x.Id == PAROTID_L_OPT_ID);
             if (check_ParotidLOAR != null)
@@ -214,16 +255,33 @@ namespace VMS.TPS
                     PAROTID_R_OPT_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
             }
 
-
-            // Check for Pharynx
-            Structure check_Pharynx = ss.Structures.FirstOrDefault(x => x.Id == PHARYNX_OPT_ID);
-            if (check_Pharynx != null)
+            // Check for Pharynx OAR
+            Structure check_PharynxOAR = ss.Structures.FirstOrDefault(x => x.Id == PHARYNX_OPT_ID);
+            if (check_PharynxOAR != null)
             {
                 flagOAR_pharynx = false;
                 MessageBox.Show(string.Format("'{0}' already exists! '{0}' will not be created. OK to continue? ", PHARYNX_OPT_ID,
                     PHARYNX_OPT_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
             }
-            
+
+            // Check for Brainstem PRV
+            Structure check_BrainStemPRV = ss.Structures.FirstOrDefault(x => x.Id == BRAINSTEM3mm_ID);
+            if (check_BrainStemPRV != null)
+            {
+                flagOAR_brainstem = false;
+                MessageBox.Show(string.Format("'{0}' already exists! '{0}' will not be created. OK to continue? ", BRAINSTEM3mm_ID,
+                    BRAINSTEM3mm_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+            }
+
+            // Check for Spinal Cord PRV
+            Structure check_SpinalCordPRV = ss.Structures.FirstOrDefault(x => x.Id == CORD5mm_ID);
+            if (check_SpinalCordPRV != null)
+            {
+                flagOAR_cord = false;
+                MessageBox.Show(string.Format("'{0}' already exists! '{0}' will not be created. OK to continue? ", CORD5mm_ID,
+                    CORD5mm_ID), SCRIPT_NAME, MessageBoxButton.OKCancel, MessageBoxImage.Exclamation);
+            }
+
 
             context.Patient.BeginModifications();   // enable writing with this script.
 
@@ -335,16 +393,40 @@ namespace VMS.TPS
                 }
 
                 //============================
-                // 8 SUBTRACT from the parotids (L and R) the PTVs
+                // 8 GENERATE 3_10mm RING, which is PTV_ALL+10mm Subtracting PTV_ALL+3mm
+                //============================       
+                if (flagPTV_RING == true)
+                {
+                    Structure ptv_all3mm = ss.AddStructure("CONTROL", PTVALL3mm_ID);
+                    Structure ptv_all10mm = ss.AddStructure("CONTROL", PTVALL10mm_ID);
+                    Structure ring_3_10pre = ss.AddStructure("CONTROL", RING3_10PRE_ID);
+                    Structure ring_3_10 = ss.AddStructure("CONTROL", RING3_10_ID);
+                    ptv_all3mm.SegmentVolume = ptv_all.Margin(3.0);
+                    ptv_all10mm.SegmentVolume = ptv_all.Margin(10.0);
+                    ring_3_10pre.SegmentVolume = ptv_all10mm.Sub(ptv_all3mm);
+                    ring_3_10.SegmentVolume = ring_3_10pre.And(body_3mm);
+
+                    string message8 = string.Format("{0} was created with volume {1}.", ring_3_10.Id, ring_3_10.Volume);
+
+                    MessageBox.Show(message8);
+
+                    ss.RemoveStructure(ptv_all3mm);
+                    ss.RemoveStructure(ptv_all10mm);
+                    ss.RemoveStructure(ring_3_10pre);
+                }
+
+
+                //============================
+                // 101 SUBTRACT from the parotids (L and R) the PTVs
                 //============================
                 if (flagOAR_parotidL == true)
                 {
                     Structure parotid_L_oar = ss.AddStructure("AVOIDANCE", PAROTID_L_OPT_ID);
                     parotid_L_oar.SegmentVolume = parotid_L.Sub(ptv_all);
 
-                    string message8_L = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
+                    string message101_L = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
                             parotid_L.Id, parotid_L_oar.Id, parotid_L.Volume, parotid_L_oar.Volume);
-                    MessageBox.Show(message8_L);
+                    MessageBox.Show(message101_L);
                 }
 
                 if (flagOAR_parotidR == true)
@@ -352,15 +434,14 @@ namespace VMS.TPS
                     Structure parotid_R_oar = ss.AddStructure("AVOIDANCE", PAROTID_R_OPT_ID);
                     parotid_R_oar.SegmentVolume = parotid_R.Sub(ptv_all);
 
-                    string message8_R = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
+                    string message101_R = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
                             parotid_R.Id, parotid_R_oar.Id, parotid_R.Volume, parotid_R_oar.Volume);
-                    MessageBox.Show(message8_R);
+                    MessageBox.Show(message101_R);
                 }
 
                 //============================
-                // 9 SUBTRACT from the pharynx the PTVs
+                // 102 SUBTRACT from the pharynx the PTVs
                 //============================
-
                 if (flagOAR_pharynx == true)
                 {
                     Structure pharynx_oar = ss.AddStructure("AVOIDANCE", PHARYNX_OPT_ID);
@@ -376,30 +457,48 @@ namespace VMS.TPS
                         pharynx_oar.SegmentVolume = pharynx.Sub(ptv_all_highres);
                         ss.RemoveStructure(ptv_all_highres);
 
-                        string message9a = string.Format("{0} was a high resolution structure.", pharynx.Id);
-                        MessageBox.Show(message9a);
+                        string message102HR = string.Format("{0} was a high resolution structure.", pharynx.Id);
+                        MessageBox.Show(message102HR);
                     }
-                    // Alternate method:
-                    // const string PHARYNX_LOWRES_ID = "pharynx_lowres";
-                    // Structure pharynx_lowres = ss.AddStructure("AVOIDANCE", PHARYNX_LOWRES_ID);
-                    // Copy pharynx to pharnyx_lowres
-                    // Add check to make sure it is lowres... if not display message and exit code
-                    // then need to add some logic about which pharynx to use to create pharynx OAR
-
                     else
                     {
                         pharynx_oar.SegmentVolume = pharynx.Sub(ptv_all);
                     }
 
-                    string message9 = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
+                    string message102 = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
                             pharynx.Id, pharynx_oar.Id, pharynx.Volume, pharynx_oar.Volume);
-                    MessageBox.Show(message9);
+                    MessageBox.Show(message102);
+                }
+
+                //============================
+                // 103 EXPAND the Brainstem 3mm
+                //============================
+                if (flagOAR_brainstem == true)
+                {
+                    Structure brainstem_PRV = ss.AddStructure("AVOIDANCE", BRAINSTEM3mm_ID);
+                    brainstem_PRV.SegmentVolume = brainstem.Margin(3.0);
+
+                    string message103 = string.Format("{0} volume = {2}\n{1} created with volume {3}",
+                        brainstem.Id, brainstem_PRV.Id, brainstem.Volume, brainstem_PRV.Volume);
+                    MessageBox.Show(message103);
+                }
+
+                //============================
+                // 104 EXPAND the Brainstem 3mm
+                //============================
+                if (flagOAR_cord == true)
+                {
+                    Structure cord_PRV = ss.AddStructure("AVOIDANCE", CORD5mm_ID);
+                    cord_PRV.SegmentVolume = cord.Margin(5.0);
+
+                    string message104 = string.Format("{0} volume = {2}\n{1} created with volume {3}",
+                        cord.Id, cord_PRV.Id, cord.Volume, cord_PRV.Volume);
+                    MessageBox.Show(message104);
                 }
 
                 //============================
                 // PRINT out all relevant structures. Delete the rest! **** FOR FINAL VERSION
                 //============================
-
                 ss.RemoveStructure(body_3mm);
                 ss.RemoveStructure(ptv_int);
                 ss.RemoveStructure(ptv_low);
