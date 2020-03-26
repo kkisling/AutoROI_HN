@@ -364,7 +364,32 @@ namespace VMS.TPS
                 if (flagOAR_pharynx == true)
                 {
                     Structure pharynx_oar = ss.AddStructure("AVOIDANCE", PHARYNX_OPT_ID);
-                    pharynx_oar.SegmentVolume = pharynx.Sub(ptv_all); 
+                    // Check if a high res structure. If so, try copying to a new, non high res structure
+                    if (pharynx.IsHighResolution == true)
+                    {
+                        pharynx_oar.ConvertToHighResolution();
+                        // Can I skip specifying that?
+                        const string PTV_ALL_HIGHRES_ID = "PTV_ALL_HighRes";
+                        Structure ptv_all_highres = ss.AddStructure("CONTROL", PTV_ALL_HIGHRES_ID);
+                        ptv_all_highres.SegmentVolume = ptv_all.SegmentVolume;
+                        ptv_all_highres.ConvertToHighResolution();
+                        pharynx_oar.SegmentVolume = pharynx.Sub(ptv_all_highres);
+                        ss.RemoveStructure(ptv_all_highres);
+
+                        string message9a = string.Format("{0} was a high resolution structure.", pharynx.Id);
+                        MessageBox.Show(message9a);
+                    }
+                    // Alternate method:
+                    // const string PHARYNX_LOWRES_ID = "pharynx_lowres";
+                    // Structure pharynx_lowres = ss.AddStructure("AVOIDANCE", PHARYNX_LOWRES_ID);
+                    // Copy pharynx to pharnyx_lowres
+                    // Add check to make sure it is lowres... if not display message and exit code
+                    // then need to add some logic about which pharynx to use to create pharynx OAR
+
+                    else
+                    {
+                        pharynx_oar.SegmentVolume = pharynx.Sub(ptv_all);
+                    }
 
                     string message9 = string.Format("{0} volume = {2}\n{1} created with volume = {3}",
                             pharynx.Id, pharynx_oar.Id, pharynx.Volume, pharynx_oar.Volume);
